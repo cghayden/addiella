@@ -2,7 +2,7 @@ const http = require('http')
 
 http
   .createServer(function (res, res) {
-    res.write('handrolling my own server with local updates!')
+    res.write('i love hating math!!')
     res.end()
   })
   .listen(3000)
