@@ -22,7 +22,9 @@ const wss = new WebSocketServer({ server: server }) // this is the server we cre
 wss.on('connection', function connection(ws) {
   // log when someone connects
   const numClients = wss.clients.size
-  console.log('client connected', numClients)
+  console.log(
+    `${new Date().toISOString()} :: client connected... number of clients: ${numClients}`
+  )
 
   // broadcast will sned a command to everyone connected
   wss.broadcast(`Current visitors: ${numClients}`)
@@ -31,8 +33,11 @@ wss.on('connection', function connection(ws) {
     ws.send('welcome to the websocket server!!')
   }
   ws.on('close', function close() {
+    const numClients = wss.clients.size
     wss.broadcast(`Current visitors: ${numClients}`)
-    console.log('client disconnected')
+    console.log(
+      `${new Date().toISOString()} :: client disconnected... number of clients: ${numClients}`
+    )
   })
 })
 
