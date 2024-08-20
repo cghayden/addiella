@@ -15,5 +15,9 @@
   ws.onmessage = (event) => {
     console.log(event.data);
   }
+  ws.addEventListener('close', () => {
+    console.log('Connection closed');
+  });
+
 </script> 
 </body>

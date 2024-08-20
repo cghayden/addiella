@@ -19,13 +19,19 @@ const wss = new WebSocketServer({ server: server }) // this is the server we cre
 
 // handle shutdown gracefully ... use a process listener to catch any SIGINT command (ctrl-c) to shutdown the server gracefully and make sure we close the db and log what we want (from our shutdownDB function)
 process.on('SIGINT', () => {
-  console.log('sigint')
-  // must close down each websocket connection or server won't close
+  console.log('SIGINT received: closing server')
+
   wss.clients.forEach(function closeEach(client) {
-    client.close()
+    client.terminate() // forcefully close the connection
   })
-  server.close(() => {
+
+  wss.close(() => {
+    console.log('WebSocket server closed')
     shutdownDB()
+    server.close(() => {
+      console.log('HTTP server closed')
+      process.exit(0) // ensure the process exits
+    })
   })
 })
 
@@ -35,6 +41,7 @@ process.on('SIGINT', () => {
 wss.on('connection', function connection(ws) {
   // log when someone connects
   const numClients = wss.clients.size
+
   console.log(
     `${new Date().toISOString()} :: client connected... number of clients: ${numClients}`
   )
@@ -96,5 +103,7 @@ function shutdownDB() {
   console.log('Shutting down db')
 
   getCounts()
-  db.close()
+  db.close((err) => {
+    err ? console.log('db err', err) : console.log('db closed')
+  })
 }
