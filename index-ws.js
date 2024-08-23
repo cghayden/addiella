@@ -40,26 +40,26 @@ process.on('SIGINT', () => {
 //  websocket states - open, closed, erroreduse listeners to handle these states
 wss.on('connection', function connection(ws) {
   // log when someone connects
-  const numClients = wss.clients.size
-
   console.log(
-    `${new Date().toISOString()} :: client connected... number of clients: ${numClients}`
+    `${new Date().toISOString()} :: client connected... number of clients: ${
+      wss.clients.size
+    }`
   )
 
-  // broadcast will send a command to everyone connected
-  wss.broadcast(`Current visitors: ${numClients}`)
-
   if (ws.readyState === ws.OPEN) {
-    ws.send('welcome to the websocket server!!')
+    ws.send('Welcome to the websocket server!!')
   }
+
+  // broadcast will send a command to everyone connected
+  wss.broadcast(`Current visitors: ${wss.clients.size}`)
 
   // insert into db everytime someone connects
   db.run(`INSERT INTO visitors (count, time)
-          VALUES (${numClients}, datetime('now'))`)
+          VALUES (${wss.clients.size}, datetime('now'))`)
 
   ws.on('close', function close() {
-    wss.broadcast(`Current visitors: ${numClients}`)
-    console.log(`client disconnected... number of clients: ${numClients}`)
+    wss.broadcast(`Current visitors: ${wss.clients.size}`)
+    console.log(`client disconnected... number of clients: ${wss.clients.size}`)
   })
 })
 

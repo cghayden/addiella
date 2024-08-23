@@ -1,23 +1,27 @@
 <!DOCTYPE html>
 <head>
-<title>Addiella</title>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
+  <title>Addiella</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
 </head>
-<script>
-  let ws;
-  // we want websocket to work on both http and https, so we need to check the protocol
-  // 'wss' stands for web socket secure, 'ws' for web socket
-  const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
-  ws = new WebSocket(`${protocol}://${window.location.host}`);
+<body>
+  <h1>Welcome to my websocket server</h1>
+  <p id="currentUsers"></p>
+  <script>
+    const currentUsers = document.getElementById('currentUsers')
 
-  ws.onmessage = (event) => {
-    console.log(event.data);
-  }
-  ws.addEventListener('close', () => {
-    console.log('Connection closed');
-  });
+    let ws
+    // we want websocket to work on both http and https, so we need to check the protocol
+    // 'wss' stands for web socket secure, 'ws' for web socket
+    const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws'
+    ws = new WebSocket(`${protocol}://${window.location.host}`)
 
-</script> 
+    ws.onmessage = (event) => {
+      console.log(event.data)
+      currentUsers.textContent = event.data
+    }
+    ws.addEventListener('close', () => {
+      console.log('Connection closed')
+    })
+  </script>
 </body>
